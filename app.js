@@ -79,7 +79,7 @@ const managerQuestions = [
     },
     {
         type: "input",
-        message: "What is your manager's office ID?",
+        message: "What is your manager's office number?",
         name: "managerOfficeId"
     }
 ];
