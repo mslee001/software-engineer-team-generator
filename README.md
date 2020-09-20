@@ -45,7 +45,7 @@ npm run manager-test
 ```
 
 ## Video Walkthru
-<iframe src="https://drive.google.com/file/d/1iRpIc0ELu6Et-Pk3JLIfEcu5uaiaAGx2/preview" width="640" height="480"></iframe>
+<img src="assets/software-team-generator.gif">
 
 ## Screenshots
 CLI:
