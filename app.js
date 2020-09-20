@@ -10,7 +10,10 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+//array to save all the members of the team
 const employees = [];
+
+//question set for an engineer team member
 const engineerQuestions = [
     {
         type: "input",
@@ -60,6 +63,8 @@ const engineerQuestions = [
         }
     }    
 ];
+
+//question set for an intern team member
 const internQuestions = [
     {
         type: "input",
@@ -109,6 +114,8 @@ const internQuestions = [
         }
     }
 ];
+
+//question set for the manager
 const managerQuestions = [
     {
         type: "input",
@@ -162,13 +169,16 @@ const managerQuestions = [
     }
 ];
 
+//initialization function
 function init() {
+    //function to present the manager questions and save the manager object to the employee array
     function createManager(){
         inquirer.prompt(managerQuestions).then(function(response) {
             employees.push(new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeId));
             createTeam();
         });
     }
+    //function to ask if the user wishes to add more team members or if they are done
     function createTeam() {
         inquirer.prompt([
             {
@@ -191,6 +201,7 @@ function init() {
         })
     }
 
+    //function to present the engineer questions and save the engineer object to the employees array
     function addEngineer() {
         inquirer.prompt(engineerQuestions).then(function(response) {
             employees.push(new Engineer(response.name, response.id, response.email, response.github));
@@ -198,6 +209,7 @@ function init() {
         })
     }
 
+    //function to present the intern questions and save the intern object to the employees array
     function addIntern() {
         inquirer.prompt(internQuestions).then(function(response) {
             employees.push(new Intern(response.internName, response.internId, response.internEmail, response.internSchool));
@@ -205,10 +217,13 @@ function init() {
         })
     }
     
+    //function to create the html file
     function buildTeam() {
         fs.writeFileSync(outputPath, render(employees), "utf-8");
     }
+    //starts the app off with asking the manager questions first
     createManager();
 }
 
+//starts the app
 init();
