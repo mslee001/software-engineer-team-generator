@@ -33,13 +33,7 @@ const engineerQuestions = [
         type: "input",
         message: "What is the engineer's github user?",
         name: "github"
-    },
-    {
-        type: "list",
-        message: "Which type of team member would you like to add next?",
-        choices: ["intern", "engineer", "Done adding team members"],
-        name:"nextMember"
-    }     
+    }    
 ];
 const internQuestions = [
     {
@@ -61,13 +55,7 @@ const internQuestions = [
         type: "input",
         message: "What school is the intern going to?",
         name: "internSchool"
-    },
-    {
-        type: "list",
-        message: "Which type of team member would you like to add next?",
-        choices: ["intern", "engineer", "Done adding team members"],
-        name:"nextMember"
-    } 
+    }
 ];
 const managerQuestions = [
     {
@@ -95,53 +83,95 @@ const managerQuestions = [
         type: "input",
         message: "What is your manager's office ID?",
         name: "managerOfficeId"
-    },
-    {
-        type: "list",
-        message: "Which type of team member would you like to add next?",
-        choices: ["intern", "engineer", "Done adding team members"],
-        name:"nextMember"
     }
 ];
 
+function init() {
+    function createManager(){
+        inquirer.prompt(managerQuestions).then(function(response) {
+            employees.push(new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeId));
+            createTeam();
+        });
+    }
+    function createTeam() {
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Which type of team member would you like to add next?",
+                choices: ["Intern", "Engineer", "Done adding team members"],
+                name:"nextMember"
+            }
+        ]).then(userChoice => {
+            switch(userChoice.nextMember) {
+            case "Engineer":
+                addEngineer();
+                break;
+            case "Intern":
+                addIntern();
+                break;
+            default:
+                buildTeam();
+            }
+        })
+    }
+
+    function addEngineer() {
+        inquirer.prompt(engineerQuestions).then(function(response) {
+            employees.push(new Engineer(response.name, response.id, response.email, response.github));
+            createTeam();
+        })
+    }
+
+    function addIntern() {
+        inquirer.prompt(internQuestions).then(function(response) {
+            employees.push(new Intern(response.internName, response.internId, response.internEmail, response.internSchool));
+            createTeam();
+        })
+    }
+    
+    function buildTeam() {
+        fs.writeFileSync(outputPath, render(employees), "utf-8");
+    }
+    createManager();
+}
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-function userPrompts(questions) {
-    do {
-    return inquirer.prompt(questions).then(function(response) {
+// function userPrompts(questions) {
+//     do {
+//     return inquirer.prompt(questions).then(function(response) {
         
-        if (questions === managerQuestions ) {
-            employees.push(new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeId));
+//         if (questions === managerQuestions ) {
+//             employees.push(new Manager(response.managerName, response.managerId, response.managerEmail, response.managerOfficeId));
 
-        } else if (questions === engineerQuestions) {
-            employees.push(new Engineer(response.name, response.id, response.email, response.github));
+//         } else if (questions === engineerQuestions) {
+//             employees.push(new Engineer(response.name, response.id, response.email, response.github));
 
-        } else if (questions === internQuestions) {
-            employees.push(new Intern(response.internName, response.internId, response.internEmail, response.internSchool));
-        }
-        nextQuestions(response);
-    })   
-} while (response.nextMember === "" || response.nextMember === "engineer" || response.nextMember === "intern") 
-}
+//         } else if (questions === internQuestions) {
+//             employees.push(new Intern(response.internName, response.internId, response.internEmail, response.internSchool));
+//         }
+//         nextQuestions(response);
+//     })   
+// } while (response.nextMember === "" || response.nextMember === "engineer" || response.nextMember === "intern") 
+// }
 
-function nextQuestions(response){
-    if (response.nextMember === "engineer") {
-        userPrompts(engineerQuestions);
-    } else if (response.nextMember === "intern") {
-        userPrompts(internQuestions);
-    } else 
-    console.log(employees);
-}
+// function nextQuestions(response){
+//     if (response.nextMember === "engineer") {
+//         userPrompts(engineerQuestions);
+//     } else if (response.nextMember === "intern") {
+//         userPrompts(internQuestions);
+//     } else 
+//     console.log(employees);
+// }
 
 
-async function init() {
-    try {
-        await userPrompts(managerQuestions);
-        await writeFileAsync(outputPath, render(employees));
-    } catch(err) {
-        console.log(err);
-    }
-}
+// async function init() {
+//     try {
+//         await userPrompts(managerQuestions);
+//         await writeFileAsync(outputPath, render(employees));
+//     } catch(err) {
+//         console.log(err);
+//     }
+// }
 
 init();
 
